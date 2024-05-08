@@ -7,6 +7,7 @@ import { booksInterface } from '../interfaces/model.interfaces';
 import authorModel from '../models/author.model';
 import categoryModel from '../models/category.model';
 import { title } from 'process';
+import { MSGS } from '../constants/messages';
 
 @injectable()
 export class bookService implements bookServiceInterface {
@@ -28,12 +29,12 @@ export class bookService implements bookServiceInterface {
 
                 if (page == undefined || page == 1) {
                     const allBook = await bookModel.find({}).limit(5) as booksInterface[];
-                    return { allBook, "page": `1/${length}`, "tip": 'pass page in params to go that page!!' }
+                    return { allBook, "page": `1/${length}`, "tip":  MSGS.page_tip}
                 } else {
                     const limitsize = 5
                     const skippage = (page - 1) * limitsize
                     const allBooks = await bookModel.find({}).skip(skippage).limit(5) as booksInterface[];
-                    return { allBooks, "page": `${page}/${length}` };
+                    return { allBooks, "page": `${page}/${length}`, "tip" : MSGS.page_tip };
                 }
             }
 
@@ -57,12 +58,12 @@ export class bookService implements bookServiceInterface {
                         price: price,
                         add_by: add_by
                     })
-                    return { 200: 'Book added Successfully!' }
+                    return { 200: MSGS.book_added }
                 } else {
-                    return { 404: "category is not found!!", "suggestion": "please add category first! " }
+                    return { 404: MSGS.book_notFound, "suggestion": "please add category first! " }
                 }
             } else {
-                return { 404: "author is not found!!", "suggestion": "please add author first!" }
+                return { 404: MSGS.author_notFound, "suggestion": "please add author first!" }
             }
 
         } catch (err: any) {
@@ -73,7 +74,7 @@ export class bookService implements bookServiceInterface {
     async deleteBook(bookID: string): Promise<object> {
         try {
             await bookModel.findOneAndDelete({ _id: bookID });
-            return { 200: 'book deleted!' };
+            return { 200:  MSGS.book_deleted};
         } catch (err: any) {
             return { 500: err.message }
         }
@@ -92,7 +93,7 @@ export class bookService implements bookServiceInterface {
                     updated_by: updated_by
                 }
             })
-            return { 200: 'book updated!!' }
+            return { 200:  MSGS.book_updated}
         } catch (err: any) {
             return { 500: err.message }
         }

@@ -4,6 +4,7 @@ import { categoryServiceInterface } from '../interfaces/services.interfaces';
 import { httpDelete, httpGet, httpPost } from 'inversify-express-utils';
 import categoryModel from '../models/category.model';
 import { categoryInterface } from '../interfaces/model.interfaces';
+import { MSGS } from '../constants/messages';
 
 @injectable()
 export class categoryService implements categoryServiceInterface {
@@ -25,7 +26,7 @@ export class categoryService implements categoryServiceInterface {
 
                 if (page == undefined || page == 1) {
                     const allCategory = await categoryModel.find({}).limit(5) as categoryInterface[];
-                    return { allCategory, "page": `${1}/${length}`, "tip": 'pass page in params to go that page!!' }
+                    return { allCategory, "page": `${1}/${length}`, "tip": MSGS.page_tip }
                 } else {
                     const limitsize = 5
                     const skippage = (page - 1) * limitsize;
@@ -44,7 +45,7 @@ export class categoryService implements categoryServiceInterface {
                 category: categoryName,
                 add_by: add_by
             });
-            return { 200: 'category added successfully!!' }
+            return { 200:  MSGS.category_added}
         } catch (err: any) {
             return { 500: err.message }
         }
@@ -54,7 +55,7 @@ export class categoryService implements categoryServiceInterface {
     async updateCategory(categoryID: string, newCategoryName: string, updated_by: string): Promise<object> {
         try {
             await categoryModel.findOneAndUpdate({ _id: categoryID }, { $set: { category: newCategoryName, updated_by: updated_by } })
-            return { 200: 'category updated successfully!!' };
+            return { 200:  MSGS.category_updated};
         } catch (err: any) {
             return { 500: err.message }
         }
@@ -65,7 +66,7 @@ export class categoryService implements categoryServiceInterface {
 
         try {
             await categoryModel.findOneAndDelete({ _id: categoryID });
-            return { 200: "category deleted successfully!!" };
+            return { 200:  MSGS.category_deleted};
         } catch (err: any) {
             return { 500: err.message }
         }

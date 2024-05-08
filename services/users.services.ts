@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import mongoose from "mongoose";
 dotenv.config({path : '../config/.env'});
 import bcrypt from 'bcrypt';
+import { MSGS } from "../constants/messages";
 
 @injectable()
 export class userServices implements usersServiceInterface{
@@ -14,7 +15,7 @@ export class userServices implements usersServiceInterface{
         try{
             const checkDuplicate: usersInterface = await userModel.findOne({username : username}) as usersInterface;
             if(checkDuplicate){
-                return {409 : "Username is already exists!!"}
+                return {409 : MSGS.user_already}
             }else{
                 if(
                     await userModel.create({
@@ -22,9 +23,9 @@ export class userServices implements usersServiceInterface{
                         password : password
                     })
                 ){
-                    return { 200 : "user registered Succesfully!!"};
+                    return { 200 : MSGS.user_registered};
                 }else{
-                    return {500 : 'some problem while creating user!!'};
+                    return {500 : MSGS.user_problem};
                 }
             }
         }catch(err: any){
@@ -46,15 +47,15 @@ export class userServices implements usersServiceInterface{
                     const token = await jwt.sign(data, process.env.SECRETE_KEY as string, {expiresIn : '1d'});
     
                     if(await userModel.updateOne({ _id: foundUser._id }, { $set: { token: token } })){
-                        return { 200 : "user login Succesfully!!", 'token' : token};
+                        return { 200 : MSGS.user_loggedin, 'token' : token};
                     }else{
-                        return { 500 : 'error while login!!'}
+                        return { 500 : MSGS.user_login_error}
                     }
                 }else{
-                    return {409 : "invalid creadentials!!"}
+                    return {409 : MSGS.user_invalid_cred};
                 }
             }else{
-                return {401 : 'invalid user!!'} 
+                return {401 : MSGS.user_invalid} 
             }
         }catch(err: any){
             return {500 : err.message};
@@ -69,9 +70,9 @@ export class userServices implements usersServiceInterface{
             if(
                 await userModel.findOneAndUpdate({_id: foundUser._id},{$unset : {token : {$exists : true}}})
             ){
-                return { 200 : "user logout Succesfully!!"};
+                return { 200 : MSGS.user_logout};
             }else{
-                return { 200 : "user already logout !!" };
+                return { 200 :  MSGS.user_logout_already};
             }
         }catch(err: any){
             return {500 : err.message};

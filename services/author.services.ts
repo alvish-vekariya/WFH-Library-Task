@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import { authorServiceInterface } from "../interfaces/services.interfaces";
 import authorModel from "../models/author.model";
 import { authorsInterface } from "../interfaces/model.interfaces";
+import { MSGS } from "../constants/messages";
 
 @injectable()
 export class authorService implements authorServiceInterface {
@@ -23,12 +24,12 @@ export class authorService implements authorServiceInterface {
                 // return {allAuthors};
                 if (page == undefined || page == 1) {
                     const allAuthor = await authorModel.find({}).limit(5) as authorsInterface[];
-                    return { allAuthor, "page": `${1}/${length}`, "tip": 'pass page in params to go that page!!' }
+                    return { allAuthor, "page": `${1}/${length}`, "tip": MSGS.page_tip }
                 } else {
                     const limitsize = 5
                     const skippage = (page - 1) * limitsize
                     const allAuthor = await authorModel.find({}).skip(skippage).limit(5) as authorsInterface[];
-                    return { allAuthor, "page": `${page}/${length}`, "tip": 'pass page in params to go that page!!' };
+                    return { allAuthor, "page": `${page}/${length}`, "tip": MSGS.page_tip };
                 }
             }
         } catch (err: any) {
@@ -44,7 +45,7 @@ export class authorService implements authorServiceInterface {
                 nationality: nationality,
                 add_by: add_by
             })
-            return { 200: "author is added!" }
+            return { 200: MSGS.author_added}
         } catch (err: any) {
             return { 500: err.message }
         }
@@ -60,7 +61,7 @@ export class authorService implements authorServiceInterface {
                     updated_by: updated_by
                 }
             })
-            return { 200: "author is updated!!" }
+            return { 200: MSGS.author_updated}
         } catch (err: any) {
             return { 500: err.message }
         }
@@ -69,7 +70,7 @@ export class authorService implements authorServiceInterface {
     async deleteAuthor(authorID: string): Promise<object> {
         try {
             await authorModel.findOneAndDelete({ _id: authorID });
-            return { 200: "author is deleted!!" }
+            return { 200: MSGS.author_deleted }
         } catch (err: any) {
             return { 500: err.message }
         }
@@ -81,7 +82,7 @@ export class authorService implements authorServiceInterface {
             if (foundAuthor) {
                 return { foundAuthor }
             } else {
-                return { 404: 'author is not found!!' }
+                return { 404: MSGS.author_notFound }
             }
         } catch (err: any) {
             return { 500: err.message }
