@@ -4,9 +4,9 @@ import { controller, httpDelete, httpGet, httpPost, httpPut } from "inversify-ex
 import { authorService } from "../services/author.services";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { checkLogin } from '../middleware/checklogin.middleware';
+import { authMiddleWare } from '../middleware/checklogin.middleware';
 
-@controller('/authors', checkLogin)
+@controller('/authors', authMiddleWare)
 export class authorController{
 
     constructor(@inject('authorServices') private authorServices : authorService){}

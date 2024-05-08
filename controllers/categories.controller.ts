@@ -3,11 +3,9 @@ import { categoryService } from "../services/category.services";
 import { inject } from "inversify";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { checkLogin } from "../middleware/checklogin.middleware";
+import { authMiddleWare} from "../middleware/checklogin.middleware";
 
-
-
-@controller('/category', checkLogin)
+@controller('/category', authMiddleWare)
 export class categoryController{
 
     constructor(@inject('categoryServices') private categoryService : categoryService){}
