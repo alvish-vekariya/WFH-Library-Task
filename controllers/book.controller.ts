@@ -4,10 +4,11 @@ import { bookService } from "../services/book.services";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { authMiddleWare} from "../middleware/checklogin.middleware";
+import { TYPES } from "../constants/types";
 
 @controller('/books', authMiddleWare)
 export class bookController {
-    constructor(@inject('bookServices') private bookService : bookService){}
+    constructor(@inject(TYPES.bookServices) private bookService : bookService){}
 
     @httpGet('/getAllBooks')
     async getAllBooks(req: Request, res: Response){

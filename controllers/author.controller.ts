@@ -5,11 +5,12 @@ import { authorService } from "../services/author.services";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { authMiddleWare } from '../middleware/checklogin.middleware';
+import { TYPES } from '../constants/types';
 
 @controller('/authors', authMiddleWare)
 export class authorController{
 
-    constructor(@inject('authorServices') private authorServices : authorService){}
+    constructor(@inject(TYPES.authorServices) private authorServices : authorService){}
 
     @httpGet('/getAllAuthors')
     async getAllAuthors(req:Request, res: Response){

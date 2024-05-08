@@ -4,11 +4,12 @@ import { inject } from "inversify";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { authMiddleWare} from "../middleware/checklogin.middleware";
+import { TYPES } from "../constants/types";
 
 @controller('/category', authMiddleWare)
 export class categoryController{
 
-    constructor(@inject('categoryServices') private categoryService : categoryService){}
+    constructor(@inject(TYPES.categoryServices) private categoryService : categoryService){}
 
     @httpGet('/getAllCategories')
     async getCategories(req: Request, res: Response){

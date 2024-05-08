@@ -2,10 +2,11 @@ import { injectable, inject } from "inversify";
 import { controller, httpGet, httpPost } from "inversify-express-utils";
 import { Request, Response } from "express";
 import { usersServiceInterface } from "../interfaces/services.interfaces";
+import { TYPES } from "../constants/types";
 
 @controller('/user')
 export class userController{
-    constructor(@inject('userServices') private userService: usersServiceInterface){}
+    constructor(@inject(TYPES.userServices) private userService: usersServiceInterface){}
 
     @httpPost('/register')
     async register(req: Request, res: Response){
