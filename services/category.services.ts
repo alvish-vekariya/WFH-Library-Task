@@ -10,8 +10,8 @@ export class categoryService implements categoryServiceInterface {
 
     async getAllCategories(page: any): Promise<object> {
         try{
-            const allCategories  = await categoryModel.find({}) as categoryInterface[];
-            const length: number = Math.ceil(allCategories.length/5) as number;
+            const allCategoriesCount  = await categoryModel.countDocuments({}) as number;
+            const length: number = Math.ceil(allCategoriesCount/5) as number;
 
             if(page == undefined || page ==1){
                     const allCategory = await categoryModel.find({}).limit(5) as categoryInterface[];

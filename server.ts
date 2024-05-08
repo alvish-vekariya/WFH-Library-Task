@@ -3,10 +3,7 @@ import {InversifyExpressServer} from 'inversify-express-utils';
 import dotenv from 'dotenv';
 dotenv.config({path:'./config/.env'});
 import express from 'express';
-import './controllers/user.controller';
-import './controllers/categories.controller';
-import './controllers/author.controller';
-import './controllers/book.controller';
+import './controllers';
 import mongoose from 'mongoose';
 import container from './inversify config/inversify.config';
 

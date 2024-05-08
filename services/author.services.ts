@@ -7,8 +7,8 @@ import { authorsInterface } from "../interfaces/model.interfaces";
 export class authorService implements authorServiceInterface{
     async getAllAuthors(page: any): Promise<object> {
         try{
-            const allAuthors = await authorModel.find({}) as authorsInterface[];
-            const length: number = Math.ceil(allAuthors.length/5) as number;
+            const allAuthorsCount = await authorModel.countDocuments({}) as number;
+            const length: number = Math.ceil(allAuthorsCount/5) as number;
             // return {allAuthors};
             if(page == undefined || page ==1){
                 const allAuthor = await authorModel.find({}).limit(5) as authorsInterface[];

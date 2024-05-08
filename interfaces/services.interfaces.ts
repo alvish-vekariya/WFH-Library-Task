@@ -2,7 +2,7 @@
 
 export interface bookServiceInterface {
     addBook(title:string, author:string, category: string, isbn: number, description:string, price:number, add_by :string) : Promise<object>,
-    getAllBooks(page:number) : Promise<object>,
+    getAllBooks(page:number, search: any) : Promise<object>,
     getBook(bookID: string) : Promise<object>,
     deleteBook(bookID: string) : Promise<object>,
     updateBook(bookID: string, title:string, author:string, category: string, isbn: number, description:string, price:number, updated_by :string) : Promise<object>

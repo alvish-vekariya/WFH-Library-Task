@@ -12,8 +12,9 @@ export class bookController {
     @httpGet('/getAllBooks')
     async getAllBooks(req: Request, res: Response){
         const page = req.query.page;
+        const search = req.query.search;
         // console.log(page);
-        res.send(await this.bookService.getAllBooks(page))
+        res.send(await this.bookService.getAllBooks(page, search))
     }
 
     @httpPost('/addBook')
