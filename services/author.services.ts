@@ -3,6 +3,7 @@ import { authorServiceInterface } from "../interfaces/services.interfaces";
 import authorModel from "../models/author.model";
 import { authorsInterface } from "../interfaces/model.interfaces";
 import { MSGS } from "../constants/messages";
+import { STATUS } from "../constants/status";
 
 
 
@@ -59,6 +60,7 @@ export class authorService implements authorServiceInterface {
                 updated_by: updated_by
             }
         })
+
         return { 200: MSGS.author_updated }
 
     }
