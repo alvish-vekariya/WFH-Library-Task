@@ -19,5 +19,6 @@ export const MSGS = {
     user_invalid_cred : "invalid creadentials!!",
     user_invalid : "invalid user!!",
     user_logout_already : "user already logout !!",
-    user_logout : "user logout Succesfully!!"
+    user_logout : "user logout Succesfully!!",
+    param_required : "Parameters are missing!!"
 }

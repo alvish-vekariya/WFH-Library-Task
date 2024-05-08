@@ -6,51 +6,78 @@ import { Request, Response } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { authMiddleWare } from '../middleware/checklogin.middleware';
 import { TYPES } from '../constants/types';
+import { MSGS } from '../constants/messages';
 
 @controller('/authors', TYPES.authMiddleWare)
-export class authorController{
+export class authorController {
 
-    constructor(@inject(TYPES.authorServices) private authorServices : authorService){}
+    constructor(@inject(TYPES.authorServices) private authorServices: authorService) { }
 
     @httpGet('/getAllAuthors')
-    async getAllAuthors(req:Request, res: Response){
+    async getAllAuthors(req: Request, res: Response) {
         const page = req.query.page;
         const search = req.query.search;
-        res.send(await this.authorServices.getAllAuthors(page, search));
+        try {
+            res.send(await this.authorServices.getAllAuthors(page, search));
+        } catch (err: any) {
+            res.status(500).send({ 500: err.message })
+        }
     }
 
     @httpPost('/addAuthor')
-    async addAuthor(req:Request, res:Response){
-        const name : string = req.body.name;
+    async addAuthor(req: Request, res: Response) {
+        const name: string = req.body.name;
         const biography: string = req.body.biography;
         const nationality: string = req.body.nationality;
-        
-        const token = req.header('token') as string;
-        const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
-        res.send(await this.authorServices.addAuthor(name, biography, nationality, token_data.userID));
+        if(!name || !biography || !nationality) return res.status(404).json({404 : MSGS.param_required});
+
+        try {
+            const token = req.header('token') as string;
+            const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
+            res.send(await this.authorServices.addAuthor(name, biography, nationality, token_data.userID));
+        } catch (err: any) {
+            res.status(500).send({ 500: err.message })
+        }
     }
 
     @httpPut('/updateAuthor')
-    async updateAuthor(req: Request, res:Response){
-        const authorID : string = req.body.authorID
-        const updatedName : string = req.body.updatedName
-        const updatedBiography : string = req.body.updatedBiography
-        const updatedNationality : string = req.body.updatedNationality
+    async updateAuthor(req: Request, res: Response) {
+        const authorID: string = req.body.authorID;
+        const updatedName: string = req.body.updatedName;
+        const updatedBiography: string = req.body.updatedBiography;
+        const updatedNationality: string = req.body.updatedNationality;
 
-        const token = req.header('token') as string;
-        const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
-        res.json(await this.authorServices.updateAuthor(authorID,updatedName,updatedBiography,updatedNationality,token_data.userID))
+        if(!authorID || !updatedName || !updatedBiography || !updatedNationality) return res.status(404).json({404 : MSGS.param_required})
+
+        try {
+            const token = req.header('token') as string;
+            const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
+            res.json(await this.authorServices.updateAuthor(authorID, updatedName, updatedBiography, updatedNationality, token_data.userID))
+        }catch(err:any){
+            res.status(500).send({500 : err.message});
+        }
     }
 
     @httpDelete('/deleteAuthor')
-    async deleteAuthor(req: Request, res: Response){
+    async deleteAuthor(req: Request, res: Response) {
         const authorID: string = req.body.authorID;
-        res.send(await this.authorServices.deleteAuthor(authorID));
+        if(!authorID) return res.status(404).json({404 : MSGS.param_required});
+        try{
+            res.send(await this.authorServices.deleteAuthor(authorID));
+        }catch(err:any){
+            res.status(500).send({500 : err.message});
+        }
     }
 
     @httpGet('/getAuthor')
-    async getAuthor(req: Request, res: Response){
+    async getAuthor(req: Request, res: Response) {
         const authorID: string = req.body.authorID;
-        res.send(await this.authorServices.getAuthor(authorID));
+        if(!authorID) return res.status(404).json({404 : MSGS.param_required});
+
+        try{
+            res.send(await this.authorServices.getAuthor(authorID));
+        }catch(err:any){
+            res.status(500).send({500 : err.message});
+        }
     }
 }

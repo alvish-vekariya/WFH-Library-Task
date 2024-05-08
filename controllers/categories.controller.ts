@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { authMiddleWare} from "../middleware/checklogin.middleware";
 import { TYPES } from "../constants/types";
+import { MSGS } from "../constants/messages";
 
 @controller('/category', TYPES.authMiddleWare)
 export class categoryController{
@@ -15,7 +16,11 @@ export class categoryController{
     async getCategories(req: Request, res: Response){
         const page = req.query.page;
         const search = req.query.search;
-        res.send(await this.categoryService.getAllCategories(page, search));
+        try{
+            res.send(await this.categoryService.getAllCategories(page, search));
+        }catch(err: any){
+            res.status(500).send({500 : err.message});
+        }
     }
 
     @httpPost('/addCategory')
@@ -23,13 +28,24 @@ export class categoryController{
         const categoryName : string = req.body.categoryName;
         const token : string = req.header('token') as string;
         const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
-        res.send(await this.categoryService.addCategory(categoryName, token_data.userID));
+
+        if(!categoryName || !token) return res.status(404).json({404 : MSGS.param_required});
+        try{
+            res.send(await this.categoryService.addCategory(categoryName, token_data.userID));
+        }catch(err : any){
+            res.status(500).send({500 : err.message})
+        }
     }
     
     @httpDelete('/deleteCategory')
     async deleteCategory(req: Request, res: Response){
         const categoryID : string = req.body.categoryID;
-        res.send(await this.categoryService.deleteCategory(categoryID));
+        if(!categoryID) return res.status(404).json({404 : MSGS.param_required});
+        try{
+            res.send(await this.categoryService.deleteCategory(categoryID));
+        }catch(err : any){
+            res.status(500).send({500 : err.message})
+        }
     }
 
     @httpPut('/updateCategory')
@@ -38,6 +54,11 @@ export class categoryController{
         const newCategoryName : string = req.body.newCategoryName;
         const token : string = req.header('token') as string;
         const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
-        res.send(await this.categoryService.updateCategory(categoryID, newCategoryName, token_data.userID));
+        if(!categoryID || !newCategoryName || !token) return res.status(404).json({404 : MSGS.param_required});
+        try{
+            res.send(await this.categoryService.updateCategory(categoryID, newCategoryName, token_data.userID));
+        }catch(err : any){
+            res.status(500).send({500 : err.message});
+        }
     }
 }
