@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
-import dotenv from 'dotenv'
-dotenv.config({path: '../config/.env'})
+import dotenv from 'dotenv';
+dotenv.config({path: '../config/.env'});
 import jwt from 'jsonwebtoken';
 import userModel from "../models/users.model";
 import { usersInterface } from "../interfaces/model.interfaces";

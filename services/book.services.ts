@@ -14,13 +14,13 @@ export class bookService implements bookServiceInterface {
         try {
             if (search) {
                 let query : any = {};
+                
+                query.search = {$regex: search.toString(), $options : 'i' };
+                // console.log(query);
 
-                query.search = new RegExp(search.toString(), 'i')
-                console.log(query);
+                const foundedBooks = await bookModel.find({$or:[{title:query.search}]});
 
-                const data = await bookModel.find({$or:[{title:query.search}]});
-
-                return {data}
+                return {foundedBooks}
 
             } else {
                 const allBooksCount = await bookModel.countDocuments({});

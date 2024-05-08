@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { authMiddleWare} from "../middleware/checklogin.middleware";
 import { TYPES } from "../constants/types";
 
-@controller('/category', authMiddleWare)
+@controller('/category', TYPES.authMiddleWare)
 export class categoryController{
 
     constructor(@inject(TYPES.categoryServices) private categoryService : categoryService){}
@@ -14,7 +14,8 @@ export class categoryController{
     @httpGet('/getAllCategories')
     async getCategories(req: Request, res: Response){
         const page = req.query.page;
-        res.send(await this.categoryService.getAllCategories(page));
+        const search = req.query.search;
+        res.send(await this.categoryService.getAllCategories(page, search));
     }
 
     @httpPost('/addCategory')

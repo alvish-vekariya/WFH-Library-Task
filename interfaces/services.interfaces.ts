@@ -17,13 +17,13 @@ export interface usersServiceInterface{
 export interface categoryServiceInterface {
     addCategory(categoryName : string, add_by: string)  : Promise<object>,
     deleteCategory(categoryID : string) : Promise<object>,
-    getAllCategories(page:any) : Promise<object>,
+    getAllCategories(page:any, search : any) : Promise<object>,
     updateCategory(categoryID : string, newCategoryName: string, updated_by: string) : Promise<object>
 }
 
 export interface authorServiceInterface{
     addAuthor(name : string, biography: string, nationality: string, add_by: string): Promise<object>,
-    getAllAuthors(page: number): Promise<object>,
+    getAllAuthors(page: number, search:any): Promise<object>,
     updateAuthor(authorID: string, updatedName: string, updatedBiography: string, updatedNationality : string, updated_by: string): Promise<object>,
     deleteAuthor(authorID : string) : Promise<object>,
     getAuthor(authorID: string) : Promise<object>

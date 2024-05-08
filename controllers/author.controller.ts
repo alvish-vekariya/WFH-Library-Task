@@ -7,7 +7,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { authMiddleWare } from '../middleware/checklogin.middleware';
 import { TYPES } from '../constants/types';
 
-@controller('/authors', authMiddleWare)
+@controller('/authors', TYPES.authMiddleWare)
 export class authorController{
 
     constructor(@inject(TYPES.authorServices) private authorServices : authorService){}
@@ -15,7 +15,8 @@ export class authorController{
     @httpGet('/getAllAuthors')
     async getAllAuthors(req:Request, res: Response){
         const page = req.query.page;
-        res.send(await this.authorServices.getAllAuthors(page));
+        const search = req.query.search;
+        res.send(await this.authorServices.getAllAuthors(page, search));
     }
 
     @httpPost('/addAuthor')

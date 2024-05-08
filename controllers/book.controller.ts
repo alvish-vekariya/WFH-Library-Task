@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { authMiddleWare} from "../middleware/checklogin.middleware";
 import { TYPES } from "../constants/types";
 
-@controller('/books', authMiddleWare)
+@controller('/books', TYPES.authMiddleWare)
 export class bookController {
     constructor(@inject(TYPES.bookServices) private bookService : bookService){}
 

@@ -12,6 +12,6 @@ container.bind<userServices>(TYPES.userServices).to(userServices);
 container.bind<categoryService>(TYPES.categoryServices).to(categoryService);
 container.bind<authorService>(TYPES.authorServices).to(authorService);
 container.bind<bookService>(TYPES.bookServices).to(bookService);
-container.bind<authMiddleWare>(authMiddleWare).toSelf();
+container.bind<authMiddleWare>(TYPES.authMiddleWare).to(authMiddleWare);
 
 export default container;
