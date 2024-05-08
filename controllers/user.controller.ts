@@ -5,6 +5,7 @@ import { usersServiceInterface } from "../interfaces/services.interfaces";
 import { TYPES } from "../constants/types";
 import { userServices } from "../services/users.services";
 import { MSGS } from "../constants/messages";
+import { STATUS } from "../constants/status";
 
 @controller('/user')
 export class userController{
@@ -14,11 +15,11 @@ export class userController{
     async register(req: Request, res: Response){
         const username: string = req.body.username;
         const password: string = req.body.password;
-        if(!username || !password) return res.status(404).send({404 : MSGS.param_required});
+        if(!username || !password) return res.status(STATUS.not_found).send({404 : MSGS.param_required});
         try{
-            res.status(200).send(await this.userService.register(username, password));
+            res.status(STATUS.success).send(await this.userService.register(username, password));
         }catch(err: any){
-            res.status(500).send({500 : err.message})
+            res.status(STATUS.server).send({500 : err.message})
         }
     }
 
@@ -26,22 +27,22 @@ export class userController{
     async login(req: Request, res: Response){
         const username: string = req.body.username;
         const password: string = req.body.password;
-        if(!username || !password) return res.status(404).send({404 : MSGS.param_required});
+        if(!username || !password) return res.status(STATUS.not_found).send({404 : MSGS.param_required});
         try{
-            res.status(200).send(await this.userService.login(username, password));
+            res.status(STATUS.success).send(await this.userService.login(username, password));
         }catch(err : any){
-            res.status(500).send({ 500 : err.message})
+            res.status(STATUS.server).send({ 500 : err.message})
         }
     }
     
     @httpPost('/logout')
     async logout(req: Request, res: Response){
         const username: string = req.body.username;
-        if(!username) return res.status(404).send({404 : MSGS.param_required});
+        if(!username) return res.status(STATUS.not_found).send({404 : MSGS.param_required});
         try{
-            res.status(200).send(await this.userService.logout(username));
+            res.status(STATUS.success).send(await this.userService.logout(username));
         }catch(err: any){
-            res.status(500).send({ 500 : err.message});
+            res.status(STATUS.server).send({ 500 : err.message});
         }
     }
 }
