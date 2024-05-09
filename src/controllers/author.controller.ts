@@ -4,10 +4,10 @@ import { controller, httpDelete, httpGet, httpPost, httpPut } from "inversify-ex
 import { authorService } from "../services/author.services";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { authMiddleWare } from '../middleware/checklogin.middleware';
 import { TYPES } from '../constants/types';
 import { MSGS } from '../constants/messages';
 import { STATUS } from '../constants/status';
+import { ERRORS } from '../constants/errors';
 
 @controller('/authors', TYPES.authMiddleWare)
 export class authorController {
@@ -16,69 +16,71 @@ export class authorController {
 
     @httpGet('/getAllAuthors')
     async getAllAuthors(req: Request, res: Response) {
-        const page = req.query.page;
-        const search = req.query.search;
+        const {page, search} = req.query;
         try {
-            res.send(await this.authorServices.getAllAuthors(page, search));
+            return res.send(await this.authorServices.getAllAuthors(page, search));
         } catch (err: any) {
-            res.status(STATUS.server).send({ 500: err.message })
+            res.status(STATUS.SERVER).send({ 500: err.message })
         }
     }
 
     @httpPost('/addAuthor')
     async addAuthor(req: Request, res: Response) {
-        const name: string = req.body.name;
-        const biography: string = req.body.biography;
-        const nationality: string = req.body.nationality;
-        if(!name || !biography || !nationality) return res.status(STATUS.not_found).json({404: MSGS.param_required});
+        const {name, biography, nationality} = req.body;
+        if(!name || !biography || !nationality) return res.status(STATUS.NOT_FOUND).json({404: MSGS.param_required});
 
         try {
             const token = req.header('token') as string;
             const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
             res.send(await this.authorServices.addAuthor(name, biography, nationality, token_data.userID));
         } catch (err: any) {
-            res.status(STATUS.server).send({ 500: err.message })
+            if(err.code  && err.code === 11000){
+                res.status(STATUS.CONFLICT).send(ERRORS.DUPLICATION_ERROR);
+            }else{
+                res.status(err.data.statusCode).send(err.data);
+            }
         }
     }
 
     @httpPut('/updateAuthor')
     async updateAuthor(req: Request, res: Response) {
-        const authorID: string = req.body.authorID;
-        const updatedName: string = req.body.updatedName;
-        const updatedBiography: string = req.body.updatedBiography;
-        const updatedNationality: string = req.body.updatedNationality;
+        const {authorID, updatedName, updatedBiography, updatedNationality} = req.body;
 
-        if(!authorID || !updatedName || !updatedBiography || !updatedNationality) return res.status(STATUS.not_found).json({404 : MSGS.param_required})
+        if(!authorID || !updatedName || !updatedBiography || !updatedNationality) return res.status(STATUS.NOT_FOUND).json({404 : MSGS.param_required})
 
         try {
             const token = req.header('token') as string;
             const token_data = await jwt.verify(token, process.env.SECRETE_KEY as string) as JwtPayload;
             res.json(await this.authorServices.updateAuthor(authorID, updatedName, updatedBiography, updatedNationality, token_data.userID))
         }catch(err:any){
-            res.status(STATUS.server).send({500 : err.message});
+            if(err.code && err.code === 11000){
+                return res.status(STATUS.CONFLICT).send(ERRORS.DUPLICATION_ERROR);
+            }else{
+                return res.status(err.data.statusCode).send(err.data);
+            }
         }
     }
 
     @httpDelete('/deleteAuthor')
     async deleteAuthor(req: Request, res: Response) {
-        const authorID: string = req.body.authorID;
-        if(!authorID) return res.status(STATUS.not_found).json({404 : MSGS.param_required});
+        const {authorID}= req.body;
+        if(!authorID) return res.status(STATUS.NOT_FOUND).json({404 : MSGS.param_required});
         try{
             res.send(await this.authorServices.deleteAuthor(authorID));
         }catch(err:any){
-            res.status(STATUS.server).send({500 : err.message});
+            res.status(err.data.statusCode).send(err.data);
         }
     }
 
     @httpGet('/getAuthor')
     async getAuthor(req: Request, res: Response) {
-        const authorID: string = req.body.authorID;
-        if(!authorID) return res.status(STATUS.not_found).json({404 : MSGS.param_required});
+        const {authorID} = req.body;
+        if(!authorID) return res.status(STATUS.NOT_FOUND).json({404 : MSGS.param_required});
 
         try{
             res.send(await this.authorServices.getAuthor(authorID));
         }catch(err:any){
-            res.status(STATUS.server).send({500 : err.message});
+            res.status(err.data.statusCode).send(err.data);
         }
     }
 }

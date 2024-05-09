@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {InversifyExpressServer} from 'inversify-express-utils';
 import dotenv from 'dotenv';
-dotenv.config({path:'./config/.env'});
+dotenv.config({path:'./src/config/.env'});
 import express from 'express';
 import './controllers';
 import mongoose from 'mongoose';

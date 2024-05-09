@@ -4,10 +4,12 @@ import userModel from "../models/users.model";
 import { usersInterface } from "../interfaces/model.interfaces";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import mongoose from "mongoose";
 dotenv.config({ path: '../config/.env' });
 import bcrypt from 'bcrypt';
 import { MSGS } from "../constants/messages";
+import { customError } from "../handlers/custom.error";
+import { ERRORS } from "../constants/errors";
+import { EVENT_MSG } from "../constants/event.messages";
 
 @injectable()
 export class userServices implements usersServiceInterface {
@@ -15,7 +17,7 @@ export class userServices implements usersServiceInterface {
 
         const checkDuplicate: usersInterface = await userModel.findOne({ username: username }) as usersInterface;
         if (checkDuplicate) {
-            return { 409: MSGS.user_already }
+            throw new customError(MSGS.user_already, ERRORS.DUPLICATION_ERROR);
         } else {
             if (
                 await userModel.create({
@@ -23,9 +25,9 @@ export class userServices implements usersServiceInterface {
                     password: password
                 })
             ) {
-                return { 200: MSGS.user_registered };
+                return EVENT_MSG.USER_REGISTERED;
             } else {
-                return { 500: MSGS.user_problem };
+                throw new customError(MSGS.user_problem, ERRORS.USER_PROBLEM);
             }
         }
     }
@@ -44,15 +46,16 @@ export class userServices implements usersServiceInterface {
                 const token = await jwt.sign(data, process.env.SECRETE_KEY as string, { expiresIn: '1d' });
 
                 if (await userModel.updateOne({ _id: foundUser._id }, { $set: { token: token } })) {
-                    return { 200: MSGS.user_loggedin, 'token': token };
+                    const res = {...EVENT_MSG.USER_LOGGEDIN, token : token }
+                    return res;
                 } else {
-                    return { 500: MSGS.user_login_error }
+                    throw new customError(MSGS.user_login_error, ERRORS.USER_LOGIN_ERROR);
                 }
             } else {
-                return { 409: MSGS.user_invalid_cred };
+                throw new customError(MSGS.user_invalid_cred, ERRORS.INVALID_CRED);
             }
         } else {
-            return { 401: MSGS.user_invalid }
+            throw new customError(MSGS.user_invalid, ERRORS.USER_INVALID);
         }
 
 
@@ -65,9 +68,9 @@ export class userServices implements usersServiceInterface {
         if (
             await userModel.findOneAndUpdate({ _id: foundUser._id }, { $unset: { token: { $exists: true } } })
         ) {
-            return { 200: MSGS.user_logout };
+            return EVENT_MSG.USER_LOGOUT;
         } else {
-            return { 200: MSGS.user_logout_already };
+            return EVENT_MSG.USER_LOGOUT_ALREADY;
         }
 
     }

@@ -15,11 +15,11 @@ const authorSchema = new mongoose.Schema<authorsInterface>({
         type : String,
         required : [true, 'Nationality of Author is required!!']
     },
-    add_by : {
+    addBy : {
         type : String,
         required : true
     },
-    updated_by : {
+    updatedBy : {
         type : String
     }
 },{

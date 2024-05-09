@@ -4,6 +4,9 @@ import authorModel from "../models/author.model";
 import { authorsInterface } from "../interfaces/model.interfaces";
 import { MSGS } from "../constants/messages";
 import { STATUS } from "../constants/status";
+import { EVENT_MSG } from "../constants/event.messages";
+import { customError } from "../handlers/custom.error";
+import { ERRORS } from "../constants/errors";
 
 
 
@@ -44,9 +47,11 @@ export class authorService implements authorServiceInterface {
             authorName: name,
             biography: biography,
             nationality: nationality,
-            add_by: add_by
+            addBy: add_by
         })
-        return { 200: MSGS.author_added }
+
+        // console.log(check.errors);
+        return EVENT_MSG.AUTHOR_ADDED;
 
     }
 
@@ -57,18 +62,18 @@ export class authorService implements authorServiceInterface {
                 authorName: updatedName,
                 biography: updatedBiography,
                 nationality: updatedNationality,
-                updated_by: updated_by
+                updatedBy: updated_by
             }
         })
 
-        return { 200: MSGS.author_updated }
+        return EVENT_MSG.AUTHOR_UPDATED;
 
     }
 
     async deleteAuthor(authorID: string): Promise<object> {
 
         await authorModel.findOneAndDelete({ _id: authorID });
-        return { 200: MSGS.author_deleted }
+        return EVENT_MSG.AUTHOR_DELETED;
 
     }
 
@@ -76,9 +81,10 @@ export class authorService implements authorServiceInterface {
 
         const foundAuthor = await authorModel.findOne({ _id: authorID }) as authorsInterface;
         if (foundAuthor) {
-            return { foundAuthor }
+            const resp = {...EVENT_MSG.AUTHOR_FOUND, foundAuthor}
+            return resp
         } else {
-            return { 404: MSGS.author_notFound }
+            throw new customError(MSGS.author_notFound, ERRORS.AUTHOR_NOT_FOUND)
         }
 
     }

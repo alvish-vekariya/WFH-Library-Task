@@ -5,6 +5,7 @@ import { httpDelete, httpGet, httpPost } from 'inversify-express-utils';
 import categoryModel from '../models/category.model';
 import { categoryInterface } from '../interfaces/model.interfaces';
 import { MSGS } from '../constants/messages';
+import { EVENT_MSG } from '../constants/event.messages';
 
 @injectable()
 export class categoryService implements categoryServiceInterface {
@@ -41,24 +42,23 @@ export class categoryService implements categoryServiceInterface {
 
         await categoryModel.create({
             category: categoryName,
-            add_by: add_by
+            addBy: add_by
         });
-        return { 200: MSGS.category_added }
-
+        return EVENT_MSG.CATEGORY_ADDED;
 
     }
 
     async updateCategory(categoryID: string, newCategoryName: string, updated_by: string): Promise<object> {
 
-        await categoryModel.findOneAndUpdate({ _id: categoryID }, { $set: { category: newCategoryName, updated_by: updated_by } })
-        return { 200: MSGS.category_updated };
+        await categoryModel.findOneAndUpdate({ _id: categoryID }, { $set: { category: newCategoryName, updatedBy: updated_by } })
+        return EVENT_MSG.CATEGORY_UPDATED;
 
     }
 
     async deleteCategory(categoryID: string): Promise<object> {
 
         await categoryModel.findOneAndDelete({ _id: categoryID });
-        return { 200: MSGS.category_deleted };
+        return EVENT_MSG.CATEGORY_DELETED;
 
     }
 }

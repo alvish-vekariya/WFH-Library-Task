@@ -10,10 +10,10 @@ const categorySchema = new mongoose.Schema<categoryInterface>({
         required : [true, 'category is required!!'],
         unique : [true, 'category must be unique!!']
     },
-    add_by : {
+    addBy : {
         type : String
     },
-    updated_by :{
+    updatedBy :{
         type : String
     }
 }, {

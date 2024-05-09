@@ -2,12 +2,13 @@ import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { bookServiceInterface } from '../interfaces/services.interfaces';
 import bookModel from '../models/books.model';
-import { timeLog } from 'console';
 import { booksInterface } from '../interfaces/model.interfaces';
 import authorModel from '../models/author.model';
 import categoryModel from '../models/category.model';
-import { title } from 'process';
 import { MSGS } from '../constants/messages';
+import { EVENT_MSG } from '../constants/event.messages';
+import { customError } from '../handlers/custom.error';
+import { ERRORS } from '../constants/errors';
 
 @injectable()
 export class bookService implements bookServiceInterface {
@@ -54,14 +55,14 @@ export class bookService implements bookServiceInterface {
                     isbn: isbn,
                     description: description,
                     price: price,
-                    add_by: add_by
+                    addBy: add_by
                 })
-                return { 200: MSGS.book_added }
+                return EVENT_MSG.BOOK_ADDED;
             } else {
-                return { 404: MSGS.book_notFound, "suggestion": "please add category first! " }
+                throw new customError(MSGS.category_notfound,  { ...ERRORS.CATEGORY_NOT_FOUND, "suggestion": "please add category first! "});
             }
         } else {
-            return { 404: MSGS.author_notFound, "suggestion": "please add author first!" }
+            throw new customError(MSGS.author_notFound,{ ...ERRORS.AUTHOR_NOT_FOUND, "suggestion": "please add author first!" });
         }
 
 
@@ -70,7 +71,7 @@ export class bookService implements bookServiceInterface {
     async deleteBook(bookID: string): Promise<object> {
 
         await bookModel.findOneAndDelete({ _id: bookID });
-        return { 200: MSGS.book_deleted };
+        return EVENT_MSG.BOOK_DELETED;
 
     }
 
@@ -84,17 +85,21 @@ export class bookService implements bookServiceInterface {
                 isbn: isbn,
                 description: description,
                 price: price,
-                updated_by: updated_by
+                updatedBy: updated_by
             }
         })
-        return { 200: MSGS.book_updated }
+        return EVENT_MSG.BOOK_UPDATED;
 
     }
 
     async getBook(bookID: string): Promise<object> {
 
         const bookDetails = await bookModel.findOne({ _id: bookID }).populate('author').populate('category') as booksInterface;
-        return { bookDetails };
+        if(bookDetails){
+            return { bookDetails }; 
+        }else{
+            return new customError(MSGS.book_notFound, ERRORS.BOOK_NOT_FOUND)
+        }
 
     }
 }

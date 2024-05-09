@@ -29,10 +29,10 @@ const bookSchema = new mongoose.Schema<booksInterface>({
         type : Number,
         required : [true, 'price is required!']
     },
-    add_by : {
+    addBy : {
         type : mongoose.Schema.Types.ObjectId
     },
-    updated_by : {
+    updatedBy : {
         type : mongoose.Schema.Types.ObjectId
     }
 },{

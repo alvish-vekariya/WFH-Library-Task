@@ -3,5 +3,6 @@ export const TYPES = {
     categoryServices : Symbol.for('categoryServices'),
     authorServices : Symbol.for('authorServices'),
     bookServices : Symbol.for('bookServices'),
-    authMiddleWare : Symbol.for('authMiddleWare')
+    authMiddleWare : Symbol.for('authMiddleWare'),
+    customError : Symbol.for('customError')
 }

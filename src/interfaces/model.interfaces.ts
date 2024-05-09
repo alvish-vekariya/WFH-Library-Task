@@ -4,8 +4,8 @@ export interface authorsInterface  {
     authorName : string,
     biography : string,
     nationality : string,
-    add_by : string,
-    updated_by : string
+    addBy : string,
+    updatedBy : string
 }
 
 export interface booksInterface {
@@ -16,15 +16,15 @@ export interface booksInterface {
     isbn : number | undefined,
     description : string,
     price : number,
-    add_by ?: mongoose.Schema.Types.ObjectId,
-    updated_by ?: mongoose.Schema.Types.ObjectId 
+    addBy ?: mongoose.Schema.Types.ObjectId,
+    updatedBy ?: mongoose.Schema.Types.ObjectId 
 }
 
 export interface categoryInterface {
     _id ?: mongoose.Schema.Types.ObjectId,
     category : string | undefined,
-    add_by : string,
-    updated_by : string
+    addBy : string,
+    updatedBy : string
 }
 
 export interface usersInterface {
