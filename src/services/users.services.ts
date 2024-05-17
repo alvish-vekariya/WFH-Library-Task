@@ -1,15 +1,14 @@
 import { injectable } from "inversify";
-import { usersServiceInterface } from "../interfaces/services.interfaces";
-import userModel from "../models/users.model";
-import { usersInterface } from "../interfaces/model.interfaces";
+import { usersServiceInterface, usersInterface } from "../interfaces";
+import { userModel } from "../models";
+
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config({ path: "../config/.env" });
 import bcrypt from "bcrypt";
-import { MSGS } from "../constants/messages";
-import { customError } from "../handlers/custom.error";
-import { ERRORS } from "../constants/errors";
-import { EVENT_MSG } from "../constants/event.messages";
+
+import { customError } from "../handlers";
+import { ERRORS, EVENT_MSG, MSGS } from "../constants";
 
 @injectable()
 export class userServices implements usersServiceInterface {

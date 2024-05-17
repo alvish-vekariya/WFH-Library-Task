@@ -1,47 +1,15 @@
 import "reflect-metadata";
 import { injectable } from "inversify";
-import { bookServiceInterface } from "../interfaces/services.interfaces";
-import bookModel from "../models/books.model";
-import { booksInterface } from "../interfaces/model.interfaces";
-import authorModel from "../models/author.model";
-import categoryModel from "../models/category.model";
-import { MSGS } from "../constants/messages";
-import { EVENT_MSG } from "../constants/event.messages";
-import { customError } from "../handlers/custom.error";
-import { ERRORS } from "../constants/errors";
-import { pipeline } from "../constants/pipeline";
+import { bookServiceInterface, booksInterface } from "../interfaces";
+import { bookModel, authorModel, categoryModel } from "../models";
+import { MSGS, EVENT_MSG, ERRORS } from "../constants";
+import { customError, provideData } from "../handlers";
 
 @injectable()
 export class bookService implements bookServiceInterface {
-  async getAllBooks(page: any, search: any, author?:string): Promise<object> {
-    if (search) {
-      let query = ["description", "title", "category", "author"].map((ele) => {
-        return { [ele]: { $regex: search, $options: "i" } };
-      });
-      const mongoPipeline = [...pipeline, { $match: { $or: query } }];
-
-      const foundedBooks = await bookModel.aggregate(mongoPipeline);
-
-      return { foundedBooks };
-    } else {
-      const allBooksCount = await bookModel.countDocuments({});
-      const length: number = Math.ceil(allBooksCount / 5) as number;
-
-      if (page == undefined || page == 1) {
-        const allBook = (await bookModel
-          .aggregate(pipeline)
-          .limit(5)) as booksInterface[];
-        return { allBook, page: `1/${length}`, tip: MSGS.page_tip };
-      } else {
-        const limitsize = 5;
-        const skippage = (page - 1) * limitsize;
-        const allBooks = (await bookModel
-          .aggregate(pipeline)
-          .skip(skippage)
-          .limit(5)) as booksInterface[];
-        return { allBooks, page: `${page}/${length}`, tip: MSGS.page_tip };
-      }
-    }
+  async getAllBooks(page: any, search: any, filter: any): Promise<object> {
+    const returnedValues = await provideData(page, search, filter);
+    return { ...returnedValues };
   }
 
   async addBook(

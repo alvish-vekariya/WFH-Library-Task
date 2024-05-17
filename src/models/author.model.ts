@@ -29,6 +29,7 @@ const authorSchema = new mongoose.Schema<authorsInterface>(
   },
 );
 
-const authorModel = mongoose.model<authorsInterface>("authors", authorSchema);
-
-export default authorModel;
+export const authorModel = mongoose.model<authorsInterface>(
+  "authors",
+  authorSchema,
+);

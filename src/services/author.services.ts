@@ -1,12 +1,8 @@
 import { injectable } from "inversify";
-import { authorServiceInterface } from "../interfaces/services.interfaces";
-import authorModel from "../models/author.model";
-import { authorsInterface } from "../interfaces/model.interfaces";
-import { MSGS } from "../constants/messages";
-import { STATUS } from "../constants/status";
-import { EVENT_MSG } from "../constants/event.messages";
-import { customError } from "../handlers/custom.error";
-import { ERRORS } from "../constants/errors";
+import { authorServiceInterface, authorsInterface } from "../interfaces";
+import { authorModel } from "../models";
+import { MSGS, EVENT_MSG, ERRORS } from "../constants";
+import { customError } from "../handlers";
 
 @injectable()
 export class authorService implements authorServiceInterface {

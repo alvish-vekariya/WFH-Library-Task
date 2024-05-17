@@ -8,7 +8,7 @@ export interface bookServiceInterface {
     price: number,
     add_by: string,
   ): Promise<object>;
-  getAllBooks(page: number, search: any): Promise<object>;
+  getAllBooks(page: number, search: any, filter: any): Promise<object>;
   getBook(bookID: string): Promise<object>;
   deleteBook(bookID: string): Promise<object>;
   updateBook(

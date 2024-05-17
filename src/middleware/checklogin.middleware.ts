@@ -3,8 +3,8 @@ import { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config({ path: "../config/.env" });
 import jwt from "jsonwebtoken";
-import userModel from "../models/users.model";
-import { usersInterface } from "../interfaces/model.interfaces";
+import { userModel } from "../models";
+import { usersInterface } from "../interfaces";
 import { BaseMiddleware } from "inversify-express-utils";
 
 export class authMiddleWare extends BaseMiddleware {

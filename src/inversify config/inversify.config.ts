@@ -1,11 +1,13 @@
 import { Container } from "inversify";
-import { userServices } from "../services/users.services";
-import { categoryService } from "../services/category.services";
-import { authorService } from "../services/author.services";
-import { bookService } from "../services/book.services";
-import { authMiddleWare } from "../middleware/checklogin.middleware";
+import {
+  userServices,
+  categoryService,
+  authorService,
+  bookService,
+} from "../services";
+import { authMiddleWare } from "../middleware";
 import { TYPES } from "../constants/types";
-import { customError } from "../handlers/custom.error";
+import { customError } from "../handlers";
 
 const container = new Container();
 

@@ -1,13 +1,10 @@
 import { injectable, inject } from "inversify";
 import { controller, httpGet, httpPost } from "inversify-express-utils";
 import { Request, Response } from "express";
-import { usersServiceInterface } from "../interfaces/services.interfaces";
 import { TYPES } from "../constants/types";
-import { userServices } from "../services/users.services";
-import { MSGS } from "../constants/messages";
-import { STATUS } from "../constants/status";
-import { ERRORS } from "../constants/errors";
-import { eventInterface } from "../interfaces/event.interface";
+import { userServices } from "../services";
+import { STATUS, ERRORS } from "../constants";
+import { eventInterface } from "../interfaces";
 
 @controller("/user")
 export class userController {

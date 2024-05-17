@@ -6,12 +6,10 @@ import {
   httpPost,
   httpPut,
 } from "inversify-express-utils";
-import { bookService } from "../services/book.services";
+import { bookService } from "../services";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { TYPES } from "../constants/types";
-import { STATUS } from "../constants/status";
-import { ERRORS } from "../constants/errors";
+import { TYPES, STATUS, ERRORS } from "../constants";
 
 @controller("/books", TYPES.authMiddleWare)
 export class bookController {
@@ -20,9 +18,18 @@ export class bookController {
   @httpGet("/getAllBooks")
   async getAllBooks(req: Request, res: Response) {
     const { page, search } = req.query;
-    // console.log(page);
+    const { author, category, price } = req.query;
+    const check: any = { author, category, price };
+
+    let filter: any = {};
+    for (let i in check) {
+      if (check[i]) {
+        filter[i] = check[i];
+      }
+    }
+    // console.log(filter);
     try {
-      res.send(await this.bookService.getAllBooks(page, search));
+      res.send(await this.bookService.getAllBooks(page, search, filter));
     } catch (err: any) {
       res.status(err.data.statusCode).send(err.data);
     }

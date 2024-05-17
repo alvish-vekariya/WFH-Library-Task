@@ -5,14 +5,11 @@ import {
   httpPost,
   httpPut,
 } from "inversify-express-utils";
-import { categoryService } from "../services/category.services";
+import { categoryService } from "../services";
 import { inject } from "inversify";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { TYPES } from "../constants/types";
-import { MSGS } from "../constants/messages";
-import { STATUS } from "../constants/status";
-import { ERRORS } from "../constants/errors";
+import { TYPES, MSGS, STATUS, ERRORS } from "../constants";
 
 @controller("/category", TYPES.authMiddleWare)
 export class categoryController {

@@ -1,11 +1,8 @@
 import "reflect-metadata";
 import { injectable } from "inversify";
-import { categoryServiceInterface } from "../interfaces/services.interfaces";
-import { httpDelete, httpGet, httpPost } from "inversify-express-utils";
-import categoryModel from "../models/category.model";
-import { categoryInterface } from "../interfaces/model.interfaces";
-import { MSGS } from "../constants/messages";
-import { EVENT_MSG } from "../constants/event.messages";
+import { categoryServiceInterface, categoryInterface } from "../interfaces";
+import { categoryModel } from "../models";
+import { MSGS, EVENT_MSG } from "../constants";
 
 @injectable()
 export class categoryService implements categoryServiceInterface {
