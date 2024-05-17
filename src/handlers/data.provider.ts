@@ -37,7 +37,6 @@ export const provideData = async function (
   if (page == 1) {
     mongoPipeline = [...mongoPipeline, { $limit: limitsize }];
   } else {
-    const skippage = (page - 1) * limitsize;
     mongoPipeline = [...mongoPipeline, { $skip: skippage }];
   }
   const countBooks = await bookModel.aggregate(mongoPipeline);
