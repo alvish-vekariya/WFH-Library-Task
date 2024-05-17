@@ -9,6 +9,8 @@ export const provideData = async function (
   search: any,
   filter: any,
 ): Promise<object> {
+  let mongoPipeline: any = pipeline;
+
   if (Object.keys(filter).length !== 0) {
     // console.log(filter);
     let filterArr = [];
@@ -20,36 +22,32 @@ export const provideData = async function (
       }
     }
     // console.log(filterArr);
-    const mongoPipeline = [...pipeline, { $match: { $and: filterArr } }];
-    const foundedBooks = await bookModel.aggregate(mongoPipeline);
-    return { foundedBooks };
+    mongoPipeline = [...mongoPipeline, { $match: { $and: filterArr } }];
   }
+
   if (search) {
     let query = ["description", "title", "category", "author"].map((ele) => {
       return { [ele]: { $regex: search, $options: "i" } };
     });
-    const mongoPipeline = [...pipeline, { $match: { $or: query } }];
-
-    const foundedBooks = await bookModel.aggregate(mongoPipeline);
-
-    return { foundedBooks };
-  } else {
-    const allBooksCount = await bookModel.countDocuments({});
-    const length: number = Math.ceil(allBooksCount / 5) as number;
-
-    if (page == undefined || page == 1) {
-      const allBook = (await bookModel
-        .aggregate(pipeline)
-        .limit(5)) as booksInterface[];
-      return { allBook, page: `1/${length}`, tip: MSGS.page_tip };
-    } else {
-      const limitsize = 5;
-      const skippage = (page - 1) * limitsize;
-      const allBooks = (await bookModel
-        .aggregate(pipeline)
-        .skip(skippage)
-        .limit(5)) as booksInterface[];
-      return { allBooks, page: `${page}/${length}`, tip: MSGS.page_tip };
-    }
+    mongoPipeline = [...mongoPipeline, { $match: { $or: query } }];
   }
+  const limitsize = 5;
+  const skippage = (page - 1) * limitsize;
+  if (page == undefined) page = 1;
+  if (page == 1) {
+    mongoPipeline = [...mongoPipeline, { $limit: limitsize }];
+  } else {
+    const skippage = (page - 1) * limitsize;
+    mongoPipeline = [...mongoPipeline, { $skip: skippage }];
+  }
+  const countBooks = await bookModel.aggregate(mongoPipeline);
+  // console.log(countBooks.length);
+  const allBooks = (await bookModel
+    .aggregate(mongoPipeline)
+    .limit(limitsize)) as booksInterface[];
+  return {
+    allBooks,
+    page: `${page}/${Math.ceil(countBooks.length / limitsize)}`,
+    tip: MSGS.page_tip,
+  };
 };
