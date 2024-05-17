@@ -1,8 +1,7 @@
 import "reflect-metadata";
-import { bookModel } from "../models/books.model";
+import { bookModel } from "../models";
 import { booksInterface } from "../interfaces";
-import { MSGS } from "../constants";
-import { pipeline } from "../constants";
+import { MSGS, pipeline } from "../constants";
 
 export const provideData = async function (
   page: any,
