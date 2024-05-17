@@ -1,2 +1,2 @@
-export { customError } from "./custom.error";
-export { provideData } from "./data.provider";
+export * from "./custom.error";
+export * from "./data.provider";
