@@ -7,38 +7,26 @@ import { MSGS, EVENT_MSG } from "../constants";
 @injectable()
 export class categoryService implements categoryServiceInterface {
   async getAllCategories(page: any, search: any): Promise<object> {
+
+    let pipeline: any = [];
+    if(page ==undefined) page = 1;
+    const limitsize = 5;
+
     if (search) {
-      let query: any = {};
 
-      query.search = { $regex: search.toString(), $options: "i" };
-      // console.log(query);
-
-      const foundedCategory = await categoryModel.find({
-        $or: [{ category: query.search }],
-      });
-
-      return { foundedCategory };
+      pipeline.push({$match : {category : { $regex: search, $options: "i" }}});
+  
     } else {
-      const allCategoriesCount = (await categoryModel.countDocuments(
-        {},
-      )) as number;
-      const length: number = Math.ceil(allCategoriesCount / 5) as number;
-
-      if (page == undefined || page == 1) {
-        const allCategory = (await categoryModel
-          .find({})
-          .limit(5)) as categoryInterface[];
-        return { allCategory, page: `${1}/${length}`, tip: MSGS.page_tip };
-      } else {
-        const limitsize = 5;
+    
         const skippage = (page - 1) * limitsize;
-        const allCategory = (await categoryModel
-          .find({})
-          .skip(skippage)
-          .limit(5)) as categoryInterface[];
-        return { allCategory, page: `${page}/${length}` };
-      }
+        // pipeline.push({$limit : limitsize});
+        pipeline.push({$skip : skippage});
+      
     }
+    // console.log(pipeline);
+    const category = await categoryModel.aggregate([...pipeline]) as categoryInterface[];
+    const getLength = category.length;
+    return {"category" : category.slice(0,5), "page" : `${page}/${Math.ceil(getLength/limitsize)}`, "tip" : MSGS.page_tip};
   }
 
   async addCategory(categoryName: string, add_by: string): Promise<object> {

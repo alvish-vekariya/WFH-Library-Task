@@ -7,37 +7,26 @@ import { customError } from "../handlers";
 @injectable()
 export class authorService implements authorServiceInterface {
   async getAllAuthors(page: any, search: any): Promise<object> {
+
+    let pipeline: any = [];
+    const limitsize = 5;
+    if(page == undefined) page = 1;
     if (search) {
-      let query: any = {};
-
-      // query.search = new RegExp(search.toString(), 'i')
-      query.search = { $regex: search.toString(), $options: "i" };
-      // console.log(query);
-
-      const foundAuthor = await authorModel.find({
-        $or: [{ authorName: query.search }],
-      });
-
-      return { foundAuthor };
+      pipeline.push({$match : {$or : [{authorName: { $regex: search, $options: "i" }}, {nationality : {$regex : search, $options :"i"}}]}});
+      
     } else {
-      const allAuthorsCount = (await authorModel.countDocuments({})) as number;
-      const length: number = Math.ceil(allAuthorsCount / 5) as number;
-      // return {allAuthors};
-      if (page == undefined || page == 1) {
-        const allAuthor = (await authorModel
-          .find({})
-          .limit(5)) as authorsInterface[];
-        return { allAuthor, page: `${1}/${length}`, tip: MSGS.page_tip };
-      } else {
-        const limitsize = 5;
+      // if (page == 1) {
+      //   pipeline.push({$match : {}});
+      // } else {
         const skippage = (page - 1) * limitsize;
-        const allAuthor = (await authorModel
-          .find({})
-          .skip(skippage)
-          .limit(5)) as authorsInterface[];
-        return { allAuthor, page: `${page}/${length}`, tip: MSGS.page_tip };
-      }
+        // pipeline.push({$limit : limitsize});
+        pipeline.push({$skip : skippage});
+      // }
     }
+    
+    const authors = await authorModel.aggregate([...pipeline]) as authorsInterface[];
+    const getLength = authors.length;
+    return {"authos" : authors.slice(0,5) , "page" : `${page}/${Math.ceil(getLength/limitsize)}`, "tip" : MSGS.page_tip};
   }
 
   async addAuthor(
